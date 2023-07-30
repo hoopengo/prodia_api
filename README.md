@@ -35,7 +35,9 @@ module structure :
             -   `gpt3` -- access to gpt3 model
             -   `gpt4` -- access to gpt3 model ( youchat )
         -   `pollinations` -- access to pollinations image generation api
+            -   `pollinations` -- access to the generation model
         -   `prodia` -- access to prodia image generation api ( limited access and proxies dont seem to work :( )
+            -   `prodia` -- generic function to access prodia api, takes `ProdiaModel` and `ProdiaSampler`, see doc string
 
 # tips
 
