@@ -22,3 +22,10 @@ exclude = [
     "^node_modules/.*",
     "^__pycache__/.*",
 ]
+
+[tool.pylint.message-control]
+disable = [
+    "missing-timeout",
+    "too-many-arguments",
+    "too-many-locals"
+]
