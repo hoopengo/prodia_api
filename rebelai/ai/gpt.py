@@ -58,7 +58,7 @@ def gpt3(
         if "choices" not in json_data:
             continue
 
-        for choice in json_data["chioces"]:
+        for choice in json_data["choices"]:
             if choice.get("finish_reason") == "stop":
                 break
 
