@@ -7,68 +7,70 @@ import typing
 from re import Pattern
 from uuid import uuid4
 
-import requests
-import requests.structures
+import aiohttp
 import tls_client  # type: ignore
 
 from .. import const
 
 
-def gpt3(
+async def gpt3(
     prompt: str,
     api: str = const.DEFAULT_GPT3_API,
     role: str = "user",
     request_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    session_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ) -> typing.Optional[str]:
-    """access to the gpt3 model ( proxies suggested )
+    """access to the gpt3 generation model ( proxies suggested )
 
     *prompt(str): the prompt passed to the ai
     role(str): role of the prompt ( usually system or user )
     api(str): api url for the alpaca model
-    request_args(dict[str, Any] | None): arguments passed to `requests.post()`
+    request_args(dict[str, Any] | None): arguments passed to `session.post()`
+    session_args(dict[str, Any] | None): arguments passed to `aiohttp.ClientSession()`
 
     return(str | None): the ai output as a string or nothing if no output was
                         generated"""
 
     content: str = ""
 
-    for line in requests.post(
-        api,
-        json={
-            "stream": True,
-            "messages": [
-                {
-                    "role": role,
-                    "content": prompt,
-                }
-            ],
-        },
-        stream=True,
-        **(request_args or {}),
-    ).iter_lines():
-        line = line.decode()
+    async with aiohttp.ClientSession(**(session_args or {})) as session:
+        async with session.post(
+            api,
+            json={
+                "stream": True,
+                "messages": [
+                    {
+                        "role": role,
+                        "content": prompt,
+                    }
+                ],
+            },
+            **(request_args or {}),
+        ) as response:
+            async for line in response.content:
+                ln = line.decode()
 
-        if not line.startswith("data:"):
-            continue
+                if not ln.startswith("data:"):
+                    continue
 
-        json_data: typing.Dict[str, typing.Any] = json.loads(
-            line.removeprefix("data: ")
-        )
+                json_data: typing.Dict[str, typing.Any] = json.loads(
+                    line.removeprefix("data: ")  # type: ignore
+                )
 
-        if "choices" not in json_data:
-            continue
+                if "choices" not in json_data:
+                    continue
 
-        for choice in json_data["choices"]:
-            if choice.get("finish_reason") == "stop":
-                break
+                for choice in json_data["choices"]:
+                    if choice.get("finish_reason") == "stop":
+                        break
 
-            if "delta" in choice and "content" in choice["delta"]:
-                content += choice["delta"]["content"]
+                    if "delta" in choice and "content" in choice["delta"]:
+                        content += choice["delta"]["content"]
 
     return content or None
 
 
-def gpt4(
+async def gpt4(
     prompt: str,
     pattern: Pattern[str] = const.GPT4_PATTERN,
     you_params: typing.Optional[typing.Dict[str, typing.Any]] = None,
@@ -78,7 +80,7 @@ def gpt4(
     api: str = const.DEFAULT_GPT4_API,
     request_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ) -> typing.Optional[str]:
-    """access to the gpt4 model
+    """access to the gpt4 generation model
 
     *prompt(str): the prompt passed to the ai
     pattern(Pattern[str]): pattern to find all output pieces
@@ -87,22 +89,20 @@ def gpt4(
     client_headers(dict[str, Any] | None): tls client headers in requests
     client_proxies(dict[str, Any] | None): tls client proxies in requests
     api(str): api url for the alpaca model
-    request_args(dict[str, Any] | None): arguments passed to `requests.post()`
-                                         and `requests.get()`
+    request_args(dict[str, Any] | None): arguments passed to `session.post()`
+                                         and `session.get()`
 
     return(str | None): the ai output as a string or nothing if no output was
                         generated"""
 
     client: tls_client.Session = tls_client.Session(
-        client_identifier="chrome_100", **(tls_client_args or {})
+        client_identifier="chrome112", **(tls_client_args or {})
     )
 
-    client.headers = requests.structures.CaseInsensitiveDict(  # type: ignore
+    client.headers = tls_client.sessions.CaseInsensitiveDict(
         {
-            "accept": "text/event-stream",
-            "referer": "https://you.com/search?q=youchat&tbm=youchat",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+            "referer": "u",
+            "user-agent": "u",
             **(client_headers or {}),
         }
     )
@@ -122,8 +122,8 @@ AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
                             "safeSearch": "Off",
                             "onShoppingPage": False,
                             "mkt": "",
-                            "responseFilter": "WebPages,Translations,TimeZone,Computation,\
-RelatedSearches",
+                            "responseFilter": "WebPages,Translations,TimeZone,\
+Computation,RelatedSearches",
                             "domain": "youchat",
                             "queryTraceId": str(uuid4()),
                             "chat": [],

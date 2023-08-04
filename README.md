@@ -38,6 +38,8 @@ module structure :
             -   `pollinations` -- access to the generation model
         -   `prodia` -- access to prodia image generation api ( limited access and proxies dont seem to work :( )
             -   `prodia` -- generic function to access prodia api, takes `ProdiaModel` and `ProdiaSampler`, see doc string
+        -   `inferkit` -- access inferkit text completion model
+            -   `standard` -- standard model access
 
 # tips
 

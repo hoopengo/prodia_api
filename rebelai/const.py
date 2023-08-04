@@ -40,3 +40,10 @@ DEFAULT_DEEPAI_USER_AGENT: Final[
 ] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, \
 like Gecko) Chrome/111.0.0.0 Safari/537.36"
 DEFAULT_DEEPAI_API: Final[str] = "https://api.deepai.org/api"
+
+DEFAULT_INFERKIT_STARNDARD_API: Final[
+    str
+] = "https://api.inferkit.com/v1/models/standard/generate?useDemoCredits=true"
+DEFAULT_INFERKIT_LEN: Final[int] = 200
+DEFAULT_INFERKIT_TEMP: Final[float] = 1
+DEFAULT_INFERKIT_PROB: Final[float] = 0.9

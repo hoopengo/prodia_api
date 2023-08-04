@@ -6,12 +6,12 @@ import random
 import typing
 from hashlib import md5
 
-import requests
+import aiohttp
 
 from .. import const, enums
 
 
-def deepai(
+async def deepai(
     model: enums.DeepAIModel,
     data: typing.Dict[str, typing.Any],
     api_key: typing.Optional[str] = None,
@@ -19,18 +19,20 @@ def deepai(
     headers: typing.Optional[typing.Dict[str, typing.Any]] = None,
     api: str = const.DEFAULT_DEEPAI_API,
     request_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    session_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ) -> typing.Dict[str, typing.Any]:
     """multiple deepai model access ( proxies highly suggested )
 
-    *model(..enums.DeepAIModel): the deepai model youre using
+    *model(..enums.DeepAIModel): the deepai model you're using
     *data(dict[str, Any]): the form posted to the api ( usually 'text' for prompts )
-    api_key(str | None): optional api key to use, otherwise its generated automatically
+    api_key(str | None): optional api key to use, otherwise it's generated automatically
     user_agent(str): user agent posted in the headers
     headers(dict[str, Any] | None): any other headers
     api(str): the deepai api url
-    request_args(dict[str, Any] | None): arguments passed to `requests.post()`
+    request_args(dict[str, Any] | None): arguments passed to `session.post()`
+    session_args(dict[str, Any] | None): arguments passed to `aiohttp.ClientSession()`
 
-    return(dict[str, Any]): the ai api response as json, `output` is what ur
+    return(dict[str, Any]): the ai api response as json, `output` is what you're
                             looking for usually"""
 
     if api_key is None:
@@ -42,9 +44,11 @@ def deepai(
         api_key = f"tryit-{k}-\
 {rev_md5(user_agent + rev_md5( user_agent + rev_md5(user_agent + str(k) + 'x')))}"
 
-    return requests.post(
-        f"{api}/{model.value}",
-        headers={"api-key": api_key, "user-agent": user_agent, **(headers or {})},
-        **(request_args or {}),
-        data=data,
-    ).json()
+    async with aiohttp.ClientSession(**(session_args or {})) as session:
+        async with session.post(
+            f"{api}/{model.value}",
+            headers={"api-key": api_key, "user-agent": user_agent, **(headers or {})},
+            **(request_args or {}),
+            data=data,
+        ) as response:
+            return await response.json()
