@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.pyright]
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 exclude = [
     "venv",
     "**/node_modules",

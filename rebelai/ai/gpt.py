@@ -48,14 +48,15 @@ async def gpt3(
             **(request_args or {}),
         ) as response:
             async for line in response.content:
-                ln = line.decode()
+                ln: str = line.decode()
 
                 if not ln.startswith("data:"):
                     continue
 
-                json_data: typing.Dict[str, typing.Any] = json.loads(
-                    line.removeprefix("data: ")  # type: ignore
-                )
+                if (ln := ln.removeprefix("data: ").strip()) == "[DONE]":
+                    break
+
+                json_data: typing.Dict[str, typing.Any] = json.loads(ln)
 
                 if "choices" not in json_data:
                     continue
