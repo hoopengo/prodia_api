@@ -47,3 +47,5 @@ DEFAULT_INFERKIT_STARNDARD_API: Final[
 DEFAULT_INFERKIT_LEN: Final[int] = 200
 DEFAULT_INFERKIT_TEMP: Final[float] = 1
 DEFAULT_INFERKIT_PROB: Final[float] = 0.9
+
+DEFAULT_DEEPL_API: Final[str] = "https://www2.deepl.com/jsonrpc"

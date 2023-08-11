@@ -27,7 +27,7 @@ async def pollinations(
 
     async with aiohttp.ClientSession(**(session_args or {})) as session:
         async with session.get(
-            f"{api}/{prompt}{random.randint(0, 9999999999999)}",
+            url=f"{api}/{prompt}{random.randint(0, 9999999999999)}",
             **(request_args or {}),
         ) as response:
             return await response.read()

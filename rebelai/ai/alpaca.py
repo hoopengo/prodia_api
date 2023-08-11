@@ -27,6 +27,8 @@ async def alpaca_7b(
 
     async with aiohttp.ClientSession(**(session_args or {})) as session:
         async with session.post(
-            api, json={"prompt": prompt}, **(request_args or {})
+            url=api,
+            json={"prompt": prompt},
+            **(request_args or {}),
         ) as response:
             return (await response.json()).get("completion")

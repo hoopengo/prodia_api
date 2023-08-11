@@ -46,7 +46,7 @@ async def deepai(
 
     async with aiohttp.ClientSession(**(session_args or {})) as session:
         async with session.post(
-            f"{api}/{model.value}",
+            url=f"{api}/{model.value}",
             headers={"api-key": api_key, "user-agent": user_agent, **(headers or {})},
             **(request_args or {}),
             data=data,

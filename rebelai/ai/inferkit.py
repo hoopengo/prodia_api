@@ -44,7 +44,7 @@ async def standard(
 
     async with aiohttp.ClientSession(**(session_args or {})) as session:
         async with session.post(
-            api,
+            url=api,
             json={
                 "streamResponse": True,
                 "forceNoEnd": no_end,

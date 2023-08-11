@@ -62,17 +62,22 @@ async def prodia(
         }
 
         async with session.get(
-            f"{api}/generate", params=params, **request_args
+            url=f"{api}/generate",
+            params=params,
+            **request_args,
         ) as response:
             job_id = (await response.json())["job"]
 
         while True:
-            async with session.get(f"{api}/job/{job_id}", **request_args) as response:
+            async with session.get(
+                url=f"{api}/job/{job_id}",
+                **request_args,
+            ) as response:
                 status = (await response.json())["status"]
 
             if status == "succeeded":
                 url = f"https://images.prodia.xyz/{job_id}.png?download=1"
-                async with session.get(url, **request_args) as response:
+                async with session.get(url=url, **request_args) as response:
                     return await response.read() if image else url.encode()
 
             await asyncio.sleep(sleep)

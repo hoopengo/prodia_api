@@ -40,6 +40,8 @@ module structure :
             -   `prodia` -- generic function to access prodia api, takes `ProdiaModel` and `ProdiaSampler`, see doc string
         -   `inferkit` -- access inferkit text completion model
             -   `standard` -- standard model access
+        -   `deepl` -- access to deepl translation
+            -   `deepl` -- generic deepl function, see doctring for help
 
 # tips
 

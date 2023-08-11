@@ -35,7 +35,7 @@ async def gpt3(
 
     async with aiohttp.ClientSession(**(session_args or {})) as session:
         async with session.post(
-            api,
+            url=api,
             json={
                 "stream": True,
                 "messages": [
@@ -115,7 +115,7 @@ async def gpt4(
             "".join(
                 pattern.findall(
                     client.get(
-                        api,
+                        url=api,
                         params={
                             "q": prompt,
                             "page": 1,
