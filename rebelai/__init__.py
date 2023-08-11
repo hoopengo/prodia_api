@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 """rebelai -- providing free ai access to everyone"""
 
-__version__: str = "2.2.0"
+__version__: str = "2.2.1"
