@@ -1,32 +1,28 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""prodia image generation api"""
-
 import asyncio
 import random
 import typing
 
 import aiohttp
 
-from .. import const, enums
+from . import enums
+
+PRODIA_API = "https://api.prodia.com"
 
 
 async def prodia(
     prompt: str,
     model: enums.ProdiaModel = enums.ProdiaModel.REALISTIC_VISION_V5_0,
-    steps: int = const.DEFAULT_PRODIA_STEPS,
-    cfg: float = const.DEFAULT_PRODIA_CFG,
+    steps: int = 30,
+    cfg: float = 7.5,
     seed: int = -1,
     sampler: enums.ProdiaSampler = enums.ProdiaSampler.EULER,
     negative: bool = True,
-    negative_prompt: str = const.DEFAULT_PRODIA_NEG,
-    image: bool = True,
-    sleep: float = const.DEFAULT_PRODIA_SLEEP,
-    api: str = const.DEFAULT_PRODIA_API,
+    negative_prompt: str = "",
+    sleep: float = 1,
     request_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
     session_args: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ) -> bytes:
-    """prodia image generation model access ( proxies dont work + limited uses )
+    """prodia image generation model access.
 
     *prompt(str): the prompt passed to the ai
     model(..enums.ProdiaModel): the prodia model to use to generate images
@@ -36,10 +32,7 @@ async def prodia(
     sampler(..enums.ProdiaSampler): algorithm to use to generate the image
     negative(bool): enable / disable negative output filtering
     negative_prompt(str): filter / profile for the negative output
-    image(bool): if set to true returns the image as bytes, if not returns the
-                 url encoded in bytes ( use `str.decode()` to decode it )
     sleep(float): how much time to sleep between every ping request to the job
-    api(str): api url for the alpaca model
     request_args(dict[str, Any] | None): arguments passed to `session.get()`
     session_args(dict[str, Any] | None): arguments passed to `aiohttp.ClientSession()`
 
@@ -62,7 +55,7 @@ async def prodia(
         }
 
         async with session.get(
-            url=f"{api}/generate",
+            url=f"{PRODIA_API}/generate",
             params=params,
             **request_args,
         ) as response:
@@ -70,7 +63,7 @@ async def prodia(
 
         while True:
             async with session.get(
-                url=f"{api}/job/{job_id}",
+                url=f"{PRODIA_API}/job/{job_id}",
                 **request_args,
             ) as response:
                 status = (await response.json())["status"]
@@ -78,6 +71,6 @@ async def prodia(
             if status == "succeeded":
                 url = f"https://images.prodia.xyz/{job_id}.png?download=1"
                 async with session.get(url=url, **request_args) as response:
-                    return await response.read() if image else url.encode()
+                    return await response.read()
 
             await asyncio.sleep(sleep)

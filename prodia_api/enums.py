@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""enums of models and whatnot"""
-
 from enum import Enum
 
 
@@ -50,33 +46,3 @@ class ProdiaSampler(Enum):
     DPMPP_2M_KARRAS = "DPM++ 2M Karras"
     DPMPP_SDE_KARRAS = "DPM++ SDE Karras"
     DDIM = "DDIM"
-
-
-class DeepAIModel(Enum):
-    """deepai models enum"""
-
-    TEXT2IMG = "text2img"
-    IMAGE_EDITOR = "image-editor"
-    TEXT = "text-generator"
-    FANTASY_WORLD = "fantasy-world-generator"
-    UPSCALE = "torch-srgan"
-    STABLE_DIFFUSION = "stable-diffusion"
-    WAIFU2X = "waifu2x"
-    NSFW_DETECTOR = "nsfw-detector"
-    CYBERPUNK = "cuberpunk-generator"
-    IMAGE_SIMILARITY = "image-similarity"
-    CUTE_CREATURE = "cute-creature-generator"
-    RENAISSANCE_PAINTING = "renaissance-painting-generator"
-    OLD_DRAWING = "old-style-generator"
-    ANIME_PORTRAIT = "anime-portrait-generator"
-    SURREAL_GRAPHICS = "surreal-graphics-generator"
-    OBJECTS_3D = "3d-objects-generator"
-    IMPRESSIONISM_PAINTING = "impressionism-painting-generator"
-    WATERCOLOR_PAINTING = "watercolor-painting-generator"
-    CHARACTER_3D = "3d-character-generator"
-    FUTURE_ARCHITECTURE = "future-architecture-generator"
-    ANIME_WORLD = "anime-world-generator"
-    STEAMPUNK = "steampunk_generator"
-    STREET_ART = "street-art-generator"
-    ORIGAMI_3D = "origami-3d-generator"
-    HOLOGRAM_3D = "hologram-3d-generator"
